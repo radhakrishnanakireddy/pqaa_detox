@@ -9,6 +9,8 @@
     "detox:build:ios-debug": "detox build --configuration ios.sim.debug",
     "detox:e2e:ios-debug": "detox clean-framework-cache && detox build-framework-cache && DETOX_CONFIGURATION=ios.sim.debug npx cucumber-js",
     "detox:build:android-debug": "detox build --configuration android.emu.debug",
+    "detox:start-android:emulator": "$ANDROID_HOME/emulator/emulator -avd Pixel_XL",
+    "detox:stop-android:emulator": "adb -s emulator-5554 emu kill",
     "detox:e2e:android-debug": "DETOX_CONFIGURATION=android.emu.debug npx cucumber-js"
   },
   "dependencies": {
