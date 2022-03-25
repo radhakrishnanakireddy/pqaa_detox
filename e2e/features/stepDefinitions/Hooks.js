@@ -7,11 +7,11 @@ BeforeAll({ timeout: 60 * 1000 }, async () => {
 });
 
 Before(async () => {
-    await device.reverseTcpPort(8081)
+    //await device.reverseTcpPort(8081)
     await device.launchApp({ newInstance: true });
 });
 
 AfterAll(async () => {
-    await device.uninstallApp()
+    
     await cleanup();
 });

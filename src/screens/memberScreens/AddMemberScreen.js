@@ -16,7 +16,7 @@ const AddMemberScreen = ({ navigation }) => {
 };
 
 AddMemberScreen.navigationOptions = {
-  headerTitle: 'Add Member',
+  headerTitle: () => <Text testID="addMemberHeader">Add Member</Text>,
   headerTitleAlign: 'center',
 };
 
