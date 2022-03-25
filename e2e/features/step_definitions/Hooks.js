@@ -12,5 +12,6 @@ Before(async () => {
 });
 
 AfterAll(async () => {
+    await device.uninstallApp()
     await cleanup();
 });
