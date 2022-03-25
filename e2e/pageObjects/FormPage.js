@@ -1,4 +1,7 @@
 import utilities from '../helper/Utilities';
+import baseData from '../testData/baseData';
+import testData from '../testData/TestData';
+import assert from 'chai';
 
 class FormPage {
     
@@ -136,6 +139,45 @@ class FormPage {
         await element(this.formBackground).swipe('down');
     }
 
+    async fillInForm(formData) {
+        await utilities.typeInElement(this.nameInput, formData.name);
+        await utilities.typeInElement(this.surnameInput, formData.surname);
+        await this.dateOfBirthLabel.tap();
+        await this.selectDatePickerDate(formData.b_day, formData.b_month, formData.b_year);
+        await this.confirmPicker();
+        await this.startDayLabel.tap();
+        await this.selectPickerValue(this.startDayPicker, formData.start_day);
+        await utilities.typeInElement(this.emailInput, formData.email);
+
+        await utilities.scrollToElement(
+            this.postcodeInput, this.formBackground, 150, 'down'
+        );
+
+        await utilities.typeInElement(this.addressLineOneInput, formData.address_one);
+        await utilities.typeInElement(this.addressLineTwoInput, formData.address_two);
+
+        await element(this.formBackground).swipe('up');
+        
+        await utilities.typeInElement(this.cityInput, formData.city);
+        await utilities.typeInElement(this.postcodeInput, formData.postcode);
+        await this.countryLabel.tap();
+
+        await element(this.formBackground).swipe('up', 'fast', 0.25);
+
+        await this.selectPickerValue(this.countryPicker, formData.country, 'up');
+        await this.startDateLabel.tap();
+
+        await element(this.formBackground).swipe('up', 'fast', 0.25);
+        
+        await this.selectCalendarDate(
+            formData.start_day, formData.start_date, formData.start_month, formData.start_year);
+        await this.startTimeLabel.tap();
+        await this.setTime(formData.start_hour, formData.start_minute);
+        await this.confirmPicker();
+
+        this.saveMemberData(formData.member, formData.name, formData.surname);
+    }
+
     // Support functions
     async verifyFormLabels() {
         await expect(this.nameLabel).toHaveText('Name:');
@@ -160,6 +202,79 @@ class FormPage {
         await expect(this.startTimeLabel).toHaveText('Start Time:');
 
         await element(this.formBackground).swipe('down');
+    }
+
+    async selectCalendarDate(weekday, day, month, year) {
+        while (await utilities.softTextAssertion(element(by.id('HEADER_MONTH_NAME')),
+            `${month} ${year}`) === false) {
+            await element(by.id('native.calendar.CHANGE_MONTH_RIGHT_ARROW')).tap();
+        }
+        await element(by.label(` ${weekday} ${day} ${month} ${year} `)).atIndex(0).tap();
+
+    }
+
+    async selectDatePickerDate(day, month, year) {
+        if (device.getPlatform() === 'ios') {
+            await this.dateOfBirthPicker.setDatePickerDate(`${day}-${month}-${year}`,
+                'dd-MM-yyyy');
+        } else {
+           await element(by.type('android.widget.EditText')).atIndex(2).typeText(year);
+           await element(by.type('android.widget.EditText')).atIndex(1).typeText(day);
+           await element(by.type('android.widget.EditText')).atIndex(0).tap();
+           await element(by.type('android.widget.EditText')).atIndex(0).clearText();
+           await element(by.type('android.widget.EditText')).atIndex(0).typeText(baseData.getMonth(month));
+        }
+    }
+
+    async selectPickerValue(picker, value, swipeDirection) {
+        if (device.getPlatform() === 'ios') {
+            await picker.setColumnToValue(0, value);
+        } else {
+            await element(by.type('android.widget.Spinner')).tap();
+            const optionToSelect = element(by.type('android.widget.CheckedTextView').and(by.text(value)));
+            while (await utilities.softElementAssertion(optionToSelect) === false) {
+                await element(by.type('android.widget.ListView')).swipe(swipeDirection, 'slow');
+            }
+            await optionToSelect.tap();
+        }
+    }
+
+    async setTime(hours, minutes ) {
+        if (device.getPlatform() === 'ios') {
+            await element(this.formBackground).swipe('up', 'fast', 0.5);
+            await this.startTimePicker.setDatePickerDate(`${hours}:${minutes}`, 'HH:mm');
+        } else {
+            await element(by.label('Switch to text input mode for the time input.')).tap();
+            await utilities.typeInElement(element(by.type('android.widget.EditText')).atIndex(0), hours);
+            await utilities.typeInElement(element(by.type('android.widget.EditText')).atIndex(1), minutes);
+        }
+    }
+
+    async confirmPicker() {
+        if (device.getPlatform() === 'ios') {
+            await this.confirmPickerButton.tap();
+        } else {
+            await element(by.text('OK')).tap();
+        }
+    }
+
+    async cancelPicker() {
+        if (device.getPlatform() === 'ios') {
+            await this.cancelPickerButton.tap();
+        } else {
+            await element(by.text('CANCEL')).tap();
+        }
+    }
+
+    async saveMemberData(memberNumber, name, surname) {
+        switch(memberNumber) {
+            case '1':
+                testData.setName_1(name);
+                testData.setSurname_1(surname);
+                break;
+            default:
+                assert.fail(`The entered ${memberNumber} is an invalid Member`);
+        }
     }
 }
 

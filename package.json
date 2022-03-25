@@ -43,12 +43,13 @@
     "@cucumber/cucumber": "^7.3.2",
     "@react-native-community/eslint-config": "3.0.1",
     "babel-jest": "27.1.0",
+    "chai": "^4.3.4",
     "detox": "^19.5.7",
+    "detox-getprops": "^0.1.2",
     "eslint": "7.32.0",
     "jest": "27.1.0",
     "metro-react-native-babel-preset": "0.66.2",
-    "react-test-renderer": "17.0.2",
-    "chai": "^4.3.4"
+    "react-test-renderer": "17.0.2"
   },
   "jest": {
     "preset": "react-native"

@@ -2,11 +2,11 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-elements';
 
-const MemberFields = ({ labelText, fieldValue }) => {
+const MemberFields = ({ labelText, fieldValue, fieldTestId }) => {
   return (
     <View>
-      <Text style={styles.label}>{labelText}</Text>
-      <Text style={styles.field}>{fieldValue}</Text>
+      <Text style={styles.label} testID={`memberFieldLabel-${fieldTestId}`}>{labelText}</Text>
+      <Text style={styles.field} testID={`memberFieldValue-${fieldTestId}`}>{fieldValue}</Text>
     </View>
   );
 };

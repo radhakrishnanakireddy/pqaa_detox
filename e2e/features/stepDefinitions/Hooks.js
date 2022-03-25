@@ -7,11 +7,25 @@ BeforeAll({ timeout: 60 * 1000 }, async () => {
 });
 
 Before(async () => {
-    //await device.reverseTcpPort(8081)
-    await device.launchApp({ newInstance: true });
+
+    if (device.getPlatform() === 'android') {
+        await device.reverseTcpPort(8081)
+    }
+
+    let instanceBoolean = true;
+    for (let i = 0; i < testCase.pickle.tags.length; i++) {
+      let tag = testCase.pickle.tags[i].name;
+      if (tag === "@addmembers" && testData.getLastTag() === "@addmembers") {
+        instanceBoolean = false;
+      } else if (tag === "@addmembers") {
+        testData.setLastTag(tag);
+      }
+    }
+
+    await device.launchApp({ delete: instanceBoolean, newInstance: true });
 });
 
 AfterAll(async () => {
-    
+
     await cleanup();
 });
